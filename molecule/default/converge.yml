@@ -1,0 +1,31 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+
+  # TODO: check whether cache_valid_time skips the first update on a fresh VM.
+  # This task failed with "No package matching 'git'" until a manual apt-get update.
+
+  - name: Install package list on VM
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+      pkg:
+      - curl
+      - git
+
+  - name: Download and extract uv binary
+    ansible.builtin.unarchive:
+      src: https://releases.astral.sh/github/uv/releases/download/0.12.23/uv-aarch64-unknown-linux-gnu.tar.gz
+      dest: /tmp
+      remote_src: true
+      creates: "/tmp/uv-aarch64-unknown-linux-gnu/uv"
+
+  - name: Install uv binary to /usr/local/bin
+    ansible.builtin.copy:
+      src: /tmp/uv-aarch64-unknown-linux-gnu/uv
+      dest: /usr/local/bin/uv
+      remote_src: true
+      mode: "0755"

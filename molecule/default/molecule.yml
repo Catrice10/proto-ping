@@ -1,0 +1,22 @@
+---
+driver:
+  name: libvirt
+
+platforms:
+  - name: appserver
+    arch: aarch64
+    domain_type: qemu
+    image_url: "https://saimei.ftp.acc.umu.se/images/cloud/trixie/latest/debian-13-genericcloud-arm64.qcow2"
+    memory_size: 1 
+    vcpu: 1
+    disk_size: "16G"
+    qemu_user: "libvirt-qemu"
+
+provisioner:
+  name: ansible
+  playbooks:
+    create: create.yml
+    destroy: destroy.yml
+
+verifier:
+  name: ansible
