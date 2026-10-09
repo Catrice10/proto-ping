@@ -11,10 +11,10 @@
   - name: Install package list on VM
     ansible.builtin.apt:
       update_cache: yes
-      cache_valid_time: 3600
       pkg:
       - curl
       - git
+      state: present
 
   - name: Download and extract uv binary
     ansible.builtin.unarchive:
@@ -29,3 +29,32 @@
       dest: /usr/local/bin/uv
       remote_src: true
       mode: "0755"
+
+  - name: Create protoping system user
+    ansible.builtin.user:
+      name: protoping
+      system: yes
+      shell: /usr/sbin/nologin
+      create_home: yes
+      state: present    
+
+  - name: Create /srv/proto-ping directory
+    ansible.builtin.file:
+      path: /srv/proto-ping
+      state: directory
+      mode: "0755"
+      owner: protoping
+      group: protoping
+
+  - name: Copy .service file to /etc/systemd/system/protoping.service
+    ansible.builtin.copy:
+      src: protoping.service
+      dest: /etc/systemd/system/protoping.service
+      mode: "0644"
+
+  - name: Start and enable protoping
+    ansible.builtin.systemd_service:
+      daemon_reload: yes
+      name: protoping
+      state: started
+      enabled: true

@@ -1,0 +1,17 @@
+[Unit]
+Description=Run protoping
+
+[Service]
+Type=simple
+User=protoping
+WorkingDirectory=/srv/proto-ping
+
+Environment="UV_CACHE_DIR=uvcache"
+Environment="UV_TOOL_DIR=uvtool"
+
+ExecStart=/usr/local/bin/uv tool run --from git+https://github.com/Catrice10/proto-ping my_server
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
