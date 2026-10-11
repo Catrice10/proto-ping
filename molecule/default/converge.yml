@@ -14,6 +14,7 @@
       pkg:
       - curl
       - git
+      - caddy
       state: present
 
   - name: Download and extract uv binary
@@ -57,4 +58,24 @@
       daemon_reload: yes
       name: protoping
       state: started
+      enabled: true
+
+  - name: Install caddy
+    ansible.builtin.apt:
+      name: caddy
+      state: present
+
+  - name: Copy Caddyfile to /etc/caddy/Caddyfile
+    ansible.builtin.copy:
+      src: Caddyfile
+      dest: /etc/caddy/Caddyfile
+      mode: "0644"
+      owner: caddy
+      group: caddy
+  
+  - name: Restart and enable caddy
+    ansible.builtin.systemd_service:
+      daemon_reload: yes
+      name: caddy
+      state: reloaded
       enabled: true

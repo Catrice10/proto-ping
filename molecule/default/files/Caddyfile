@@ -1,0 +1,7 @@
+{
+    local_certs
+}
+
+my_server.localhost {
+    reverse_proxy localhost:8080
+}
