@@ -60,11 +60,6 @@
       state: started
       enabled: true
 
-  - name: Install caddy
-    ansible.builtin.apt:
-      name: caddy
-      state: present
-
   - name: Copy Caddyfile to /etc/caddy/Caddyfile
     ansible.builtin.copy:
       src: Caddyfile
@@ -78,4 +73,31 @@
       daemon_reload: yes
       name: caddy
       state: reloaded
+      enabled: true
+
+  - name: Create log file
+    ansible.builtin.file:
+      state: touch
+      mode: "0644"
+      path: /var/my_server-ping.log
+      modification_time: preserve
+      access_time: preserve
+
+  - name: Place monping.service file
+    ansible.builtin.copy:
+      src: monping.service
+      dest: /etc/systemd/system/monping.service
+      mode: "0644"
+  
+  - name: Place monping.timer file
+    ansible.builtin.copy:
+      src: monping.timer
+      dest: /etc/systemd/system/monping.timer
+      mode: "0644"
+  
+  - name: Start and enable monping.timer
+    ansible.builtin.systemd_service:
+      daemon_reload: yes
+      name: monping.timer
+      state: started
       enabled: true

@@ -1,0 +1,7 @@
+[Unit]
+Description=Log  
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/curl -s -kL -w "%{http_code} - %{time_total}\n" https://my_server.localhost/hello
+StandardOutput=append:/var/my_server-ping.log
